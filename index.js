@@ -42,6 +42,35 @@ async function run() {
             res.send(result);
         });
 
+        // Get spots added by a specific user
+        app.get('/my-list', (req, res) => {
+            const email = req.query.email;
+
+            // Ensure email is provided
+            if (!email) {
+                return res.status(400).send({ message: 'Email is required' });
+            }
+            // Query to find spots by user's email
+            const query = { userEmail: email };
+
+            spotCollection.find(query).toArray()
+                .then(result => {
+                    res.send(result);
+                })
+                .catch(error => {
+                    console.error('Error fetching spots:', error);
+                    res.status(500).send({ message: 'Error fetching spots' });
+                });
+        });
+
+        // Delete spot by ID
+        app.delete('/add-tourists-spot/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await spotCollection.deleteOne(query);
+            res.send(result);
+        });
+
         // POST
         app.post('/add-tourists-spot', async (req, res) => {
             const newSpot = req.body;
