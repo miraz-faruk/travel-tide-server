@@ -63,6 +63,13 @@ async function run() {
                 });
         });
 
+        app.get('/my-list/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await spotCollection.findOne(query);
+            res.send(result);
+        })
+
         // Delete spot by ID
         app.delete('/add-tourists-spot/:id', async (req, res) => {
             const id = req.params.id;
@@ -78,8 +85,6 @@ async function run() {
             const result = await spotCollection.insertOne(newSpot);
             res.send(result);
         });
-
-
 
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
