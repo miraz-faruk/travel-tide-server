@@ -8,6 +8,10 @@ const port = process.env.PORT || 5001;
 app.use(cors());
 app.use(express.json());
 
+// For teacher who check the assignment
+// DB_USER=travelTide
+// DB_PASS=N706jqWcgRo9aPTn
+
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.7plli.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
