@@ -26,6 +26,7 @@ async function run() {
         await client.connect();
 
         const spotCollection = client.db('spotDB').collection('spot');
+        const countryCollection = client.db('spotDB').collection('countries');
 
         // Get all tourists spots
         app.get('/add-tourists-spot', async (req, res) => {
@@ -46,7 +47,6 @@ async function run() {
         app.get('/my-list', (req, res) => {
             const email = req.query.email;
 
-            // Ensure email is provided
             if (!email) {
                 return res.status(400).send({ message: 'Email is required' });
             }
@@ -70,6 +70,26 @@ async function run() {
             const result = await spotCollection.findOne(query);
             res.send(result);
         })
+
+        // Get tourist spots by country name
+        app.get('/tourist-spots/:countryName', async (req, res) => {
+            const countryName = req.params.countryName;
+            const query = { country: countryName };
+            const spots = await spotCollection.find(query).toArray();
+            res.send(spots);
+        });
+
+        // Get all countries
+        app.get('/countries', (req, res) => {
+            countryCollection.find().toArray()
+                .then(countries => {
+                    res.status(200).send(countries);
+                })
+                .catch(error => {
+                    console.error('Error fetching countries:', error);
+                    res.status(500).send({ message: 'Failed to fetch countries' });
+                });
+        });
 
         // Update spot by ID
         app.put('/my-list/:id', (req, res) => {
@@ -115,7 +135,7 @@ async function run() {
             res.send(result);
         });
 
-        // POST
+        // Add new tourist spot
         app.post('/add-tourists-spot', async (req, res) => {
             const newSpot = req.body;
             console.log(newSpot);
